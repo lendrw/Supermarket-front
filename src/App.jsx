@@ -33,6 +33,7 @@ const App = () => {
                 path="/register" 
                 element={!user ? <Register /> : <Navigate to="/" />} 
               />
+              
             </Routes>
           </div>
         </BrowserRouter>

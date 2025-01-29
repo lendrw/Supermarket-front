@@ -90,8 +90,10 @@ const createUser = async (data) => {
       const { nome, token } = response.data;
   
       localStorage.setItem("token", token);
-  
-      setUser({ nome });
+      localStorage.setItem("user", nome);
+
+      return true;
+      
     } catch (err) {
       checkIfIsCancelled();
   
