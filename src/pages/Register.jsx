@@ -5,7 +5,7 @@ import styles from './Register.module.css';
 const Register = () => {
   const { createUser, loading, error: authError } = useAuthentication();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [senha, setSenha] = useState("");
   const [nome, setNome] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -18,7 +18,7 @@ const Register = () => {
     const user = {
       nome,
       email,
-      password
+      senha
     }
 
     const res = await createUser(user);
@@ -26,12 +26,12 @@ const Register = () => {
     if (!error) {
       setError("");
       setEmail(""); 
-      setPassword("");
+      setSenha("");
       setNome("");
       setSuccess("Registro realizado com sucesso!"); 
     }
 
-    if (!nome || !email || !password) {
+    if (!nome || !email || !senha) {
       setError("Preencha todos os campos!");
       return;
     }
@@ -62,8 +62,8 @@ const Register = () => {
         <input
           type="password"
           placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
         />
         {!loading && <button className="btn">Cadastrar</button>}
         {loading && (

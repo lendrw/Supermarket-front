@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
-import useAuthState from "./hooks/useAuthState";
+import { AuthProvider, AuthContext } from "./context/AuthContext";
+import { useContext } from "react";
 
 // Pages
 import Home from "./pages/Home";
@@ -11,35 +11,38 @@ import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 
 const App = () => {
-  const { user, loadingUser } = useAuthState();
-
-  if (loadingUser) {
-    return <p>Carregando...</p>;
-  }
-
   return (
-    <div className="App">
-      <AuthProvider value={ user }>
+    <AuthProvider>
+      <div className="App">
         <BrowserRouter>
-          <Navbar />
+          <Navbar/>
           <div className="container">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route 
                 path="/login" 
-                element={!user ? <Login /> : <Navigate to="/" />} 
+                element={<AuthGuard><Login /></AuthGuard>} 
               />
               <Route 
                 path="/register" 
-                element={!user ? <Register /> : <Navigate to="/" />} 
+                element={<AuthGuard><Register /></AuthGuard>} 
               />
-              
             </Routes>
           </div>
         </BrowserRouter>
-      </AuthProvider>
-    </div>
+      </div>
+    </AuthProvider>
   );
+};
+
+const AuthGuard = ({ children }) => {
+  const { auth } = useContext(AuthContext);
+
+  if (auth.isAuthenticated) {
+    return <Navigate to="/" />;
+  }
+
+  return children;
 };
 
 export default App;

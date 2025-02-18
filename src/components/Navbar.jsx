@@ -1,9 +1,10 @@
 import { NavLink } from "react-router-dom";
-import { useAuthentication } from "../hooks/useAuthentication";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
-  const { user, logout } = useAuthentication();
-
+  const { auth, logout } = useContext(AuthContext);
+  
   return (
     <div>
       <NavLink to='/'>
@@ -15,35 +16,27 @@ const Navbar = () => {
             Home
           </NavLink>
         </li>
-        {!user && (
+        {!auth.isAuthenticated && (
           <>
+            <li>Você não está logado</li>
             <li>
-              Você não está logado
+              <NavLink to='/login'>Entrar</NavLink>
             </li>
             <li>
-              <NavLink to='/login'>
-                Entrar
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to='/register'>
-                Cadastrar
-              </NavLink>
+              <NavLink to='/register'>Cadastrar</NavLink>
             </li>
           </>
         )}
-        {user && (
+        {auth.isAuthenticated && (
           <>
             <li>
-              <span>Bem-vindo, {user}!</span>
+              <span>Bem-vindo, {auth.user}!</span>
               <button onClick={logout}>Sair</button>
             </li>
             <li>
-              <NavLink to='/kart'>
-                Carrinho
-              </NavLink>
+              <NavLink to='/kart'>Carrinho</NavLink>
             </li>
-          </>   
+          </>
         )}
       </ul>
     </div>

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
+import { AuthContext } from "../context/AuthContext";
 import api from "../services/api"; 
 
 export const useAuthentication = () => {
@@ -6,12 +7,13 @@ export const useAuthentication = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [cancelled, setCancelled] = useState(false);
+  const { login: setAuthContext } = useContext(AuthContext);
 
   function checkIfIsCancelled() {
     if(cancelled) {
         return;
     }
-}
+  }
 
 const createUser = async (data) => {
   checkIfIsCancelled();
@@ -23,13 +25,13 @@ const createUser = async (data) => {
     console.log("Dados enviados para o backend:", {
       email: data.email,
       nome: data.nome,
-      password: data.password,
+      senha: data.senha,
     });
 
     const response = await api.post("/auth/registrar", {
       email: data.email,
       nome: data.nome,
-      password: data.password,
+      senha: data.senha,
     });
 
     const { user, token } = response.data;
@@ -65,10 +67,10 @@ const createUser = async (data) => {
       console.error("Erro inesperado:", err);
       setError("Ocorreu um erro inesperado. Tente novamente mais tarde.");
     }
-  } finally {
-    setLoading(false);
-  }
-};
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const login = async (data) => {
     checkIfIsCancelled();
@@ -91,6 +93,8 @@ const createUser = async (data) => {
   
       localStorage.setItem("token", token);
       localStorage.setItem("user", nome);
+
+      setAuthContext(nome, token);
 
       return true;
       
@@ -126,20 +130,26 @@ const createUser = async (data) => {
 
   const logout = () => {
     checkIfIsCancelled();
-
+  
     setLoading(true);
     setError(null);
-
+  
     try {
       localStorage.removeItem("token");
-
+      localStorage.removeItem("user");
+  
       setUser(null);
+      setAuthContext(null, null);
     } catch (err) {
       setError("Erro ao fazer logout. Tente novamente.");
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    return () => setCancelled(true);
+  }, []);
 
   return {
     user,

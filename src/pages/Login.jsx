@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useAuthentication } from "../hooks/useAuthentication";
+import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css"; 
 
 const Login = () => {
   const { login, loading, error: authError } = useAuthentication();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -25,9 +27,9 @@ const Login = () => {
       const res = await login(user);
 
       if (res?.status === 200) {
-        setEmail("");
-        setSenha("");
+        navigate("/");
         console.log("Login realizado com sucesso!");
+        
       }
     } catch (err) {
       if (err.response) {

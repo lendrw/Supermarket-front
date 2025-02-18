@@ -1,30 +1,32 @@
-import { useState, useEffect } from "react";
-import api from "../services/api"; // Certifique-se de que api está configurado com axios
+import { useState, useEffect } from 'react';
+import api from '../services/api'; 
 
 const useFetchProdutos = () => {
-  const [loading, setLoading] = useState(true); // Inicia o loading como true
-  const [error, setError] = useState(null); // Estado para armazenar erros
-  const [produtos, setProdutos] = useState([]); // Estado para armazenar os produtos
+  const [produtos, setProdutos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Função para carregar os produtos
-  const fetchProdutos = async () => {
-    try {
-      const response = await api.get("/produto/all"); // Requisição à API
-      console.log("Resposta da API:", response); // Log da resposta completa
-      setProdutos(response.data); // Armazena os produtos recebidos no estado
-    } catch (err) {
-      setError("Erro ao carregar os produtos"); // Armazena mensagem de erro
-    } finally {
-      setLoading(false); // Finaliza o loading
-    }
-  };
-
-  // Chama a função fetchProdutos assim que o componente for montado
   useEffect(() => {
-    fetchProdutos();
-  }, []); // O array vazio [] garante que seja chamado apenas uma vez na montagem
+    const fetchData = async () => {
+      try {
+        const response = await api.get('/produto/all');
+        
+        if (response.status !== 200) {
+          throw new Error('Erro ao carregar os produtos');
+        }
 
-  return { loading, error, produtos }; // Retorna o estado para o componente
+        setProdutos(response.data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false); 
+      }
+    };
+
+    fetchData(); 
+  }, []);
+
+  return { produtos, loading, error };
 };
 
 export default useFetchProdutos;
